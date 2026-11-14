@@ -1,4 +1,4 @@
-# infotrans
+# index
 # infotrans
 
 **Información, recursos y herramientas para personas trans que viven en España, hayan nacido aquí o hayan llegado de fuera.**
