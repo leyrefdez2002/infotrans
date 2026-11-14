@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>infotrans · App para personas trans en España</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+:root{--bg:#fff7fb;--surface:#ffffff;--text:#2b2140;--muted:#6f6585;--line:#f1dcea;--blue:#5bcefa;--pink:#f5a9b8;--accent:#8b5cf6;--accent-soft:#f0e8ff;--warn:#fff3cf;--warn-text:#6b4a00;
+--c1:#dff4ff;--c2:#ffe3ec;--c3:#eee5ff;--c4:#fff0d2;--shadow:0 4px 14px rgba(139,92,246,.12);
+color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a1424;--surface:#251d33;--text:#f4edfb;--muted:#b3a8c4;--line:#3a2f4d;--blue:#6fd3fa;--pink:#f4a3b6;--accent:#b79cf7;--accent-soft:#33264d;--warn:#3d3214;--warn-text:#f4d98e;--c1:#1d3442;--c2:#432434;--c3:#32264d;--c4:#413219;--shadow:0 4px 14px rgba(0,0,0,.3);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1a1424;--surface:#251d33;--text:#f4edfb;--muted:#b3a8c4;--line:#3a2f4d;--blue:#6fd3fa;--pink:#f4a3b6;--accent:#b79cf7;--accent-soft:#33264d;--warn:#3d3214;--warn-text:#f4d98e;--c1:#1d3442;--c2:#432434;--c3:#32264d;--c4:#413219;--shadow:0 4px 14px rgba(0,0,0,.3);color-scheme:dark}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font:16px/1.55 Nunito,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.app{max-width:640px;margin:0 auto;padding:0 16px 104px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:12px 0 8px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.brand{font-weight:800;font-size:22px;display:flex;align-items:center;gap:10px}
+.brand .logo{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:linear-gradient(135deg,var(--blue),var(--pink));box-shadow:var(--shadow)}
+.bar{height:6px;border-radius:3px;margin-bottom:10px;background:linear-gradient(90deg,var(--blue) 0 20%,var(--pink) 20% 40%,#fff 40% 60%,var(--pink) 60% 80%,var(--blue) 80%);border:1px solid var(--line)}
+.hr{display:flex;gap:6px;align-items:center}
+select{border:2px solid var(--line);background:var(--surface);color:var(--text);border-radius:999px;padding:7px 10px;font:inherit;font-size:14px;font-weight:600}
+.exit{border:0;background:#e5484d;color:#fff;font:inherit;font-weight:700;padding:8px 14px;border-radius:999px;cursor:pointer;font-size:14px;box-shadow:0 3px 10px rgba(229,72,77,.3)}
+h1{font-size:26px;line-height:1.2;margin:10px 0 6px;font-weight:800}
+h2{font-size:19px;margin:22px 0 8px;font-weight:800}
+p{margin:8px 0}
+.muted{color:var(--muted);font-size:14px}
+.hero{background:linear-gradient(135deg,var(--c1),var(--c2) 55%,var(--c3));border-radius:24px;padding:20px 18px;margin:8px 0 14px;box-shadow:var(--shadow)}
+.hero h1{margin-top:0}
+.hero p{margin-bottom:0;font-size:17px}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}
+.card h3{margin:0 0 4px;font-size:17px;font-weight:800}
+#lista .card:nth-child(4n+1){border-left:8px solid var(--blue)}
+#lista .card:nth-child(4n+2){border-left:8px solid var(--pink)}
+#lista .card:nth-child(4n+3){border-left:8px solid var(--accent)}
+#lista .card:nth-child(4n+4){border-left:8px solid #f6b73c}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin:2px 4px 2px 0}
+.note{background:var(--warn);color:var(--warn-text);border-radius:16px;padding:12px 14px;font-size:14px;margin:12px 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{border:2px solid var(--line);background:var(--surface);color:var(--text);padding:8px 14px;border-radius:999px;cursor:pointer;font:inherit;font-size:14px;font-weight:600}
+.chip[aria-pressed="true"]{background:linear-gradient(135deg,var(--accent),#c26bd8);color:#fff;border-color:transparent;box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{border:0;border-radius:22px;padding:16px;text-align:left;color:var(--text);cursor:pointer;font:inherit;box-shadow:var(--shadow);transition:transform .15s}
+.tile:active{transform:scale(.97)}
+.tile b{display:block;margin-bottom:4px;font-size:17px;font-weight:800}
+.tile span{font-size:13px;color:var(--muted)}
+.tile[data-go="recursos"]{background:var(--c1)}.tile[data-go="tramites"]{background:var(--c2)}.tile[data-go="comunidad"]{background:var(--c3)}.tile[data-go="ayuda"]{background:var(--c4)}
+details{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px 14px;margin:10px 0;box-shadow:var(--shadow)}
+details[open]{border-color:var(--accent)}
+summary{cursor:pointer;font-weight:700}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:2px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -4px 14px rgba(139,92,246,.1)}
+nav div{display:flex;width:100%;max-width:640px;padding:6px 6px 4px}
+nav button{flex:1;border:0;background:none;color:var(--muted);padding:6px 2px;cursor:pointer;font:inherit;font-size:12px;font-weight:600;border-radius:16px}
+nav button i{font-style:normal}
+nav button[aria-current="true"]{color:var(--accent);font-weight:800;background:var(--accent-soft)}
+nav button span{display:block;font-size:22px}
+section{display:none}section.on{display:block}
+section.on{animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+input[type=text]{width:100%;padding:12px 14px;border-radius:16px;border:2px solid var(--line);background:var(--surface);color:var(--text);font:inherit}
+input[type=text]:focus{outline:none;border-color:var(--accent)}
+button.primary{background:linear-gradient(135deg,var(--accent),#c26bd8);color:#fff;border:0;border-radius:999px;padding:11px 20px;font:inherit;font-weight:700;cursor:pointer;box-shadow:var(--shadow)}
+a{color:var(--accent)}
+.tile[data-go="mas"]{background:linear-gradient(135deg,var(--c1),var(--c3))}.tile[data-go="aprender"]{background:linear-gradient(135deg,var(--c2),var(--c4))}
+section input[type=text]{margin:4px 0}
+textarea{width:100%;padding:12px 14px;border-radius:16px;border:2px solid var(--line);background:var(--surface);color:var(--text);font:inherit;resize:vertical}
+label.ck{display:flex;gap:10px;align-items:flex-start;padding:7px 0}
+label.ck input{margin-top:5px;width:18px;height:18px;accent-color:var(--accent)}
+table.g{width:100%;border-collapse:collapse;font-size:14px}
+.g th,.g td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
+nav button{font-size:11px}
+details ul{padding-left:20px;margin:8px 0}details li{margin:4px 0}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand"><span class="logo" aria-hidden="true">🏳️‍⚧️</span> infotrans</div>
+  <div class="hr"><select id="lang" aria-label="Idioma / Language / Langue"><option value="es">Español</option><option value="en">English</option><option value="fr">Français</option><option value="ca">Català / Valencià</option><option value="gl">Galego</option><option value="eu">Euskara</option></select><button class="exit" id="exit" data-i="exit">Salida rápida</button></div>
+</header>
+<div class="bar"></div>
+
+<section id="inicio" class="on">
+  <div class="hero"><h1 data-i="hi"></h1><p data-i="sub"></p></div>
+  <div class="note"><span data-i="priv"></span></div>
+  <div class="grid">
+    <button class="tile" data-go="recursos"><b data-i="nRec"></b><span data-i="dRec"></span></button>
+    <button class="tile" data-go="tramites"><b data-i="nTra"></b><span data-i="dTra"></span></button>
+    <button class="tile" data-go="comunidad"><b data-i="nCom"></b><span data-i="dCom"></span></button>
+    <button class="tile" data-go="mas"><b data-i="nMas"></b><span data-i="dMas"></span></button>
+    <button class="tile" data-go="ayuda"><b data-i="nAyu"></b><span data-i="dAyu"></span></button>
+    <button class="tile" data-go="aprender"><b data-i="nApr"></b><span data-i="dApr"></span></button>
+  </div>
+  <h2 data-i="sit"></h2>
+  <div class="chips" id="perfil">
+    <button class="chip" aria-pressed="true" data-p="todas" data-i="pAll">Todas</button>
+    <button class="chip" aria-pressed="false" data-p="nacional" data-i="pNac">x</button>
+    <button class="chip" aria-pressed="false" data-p="migrante" data-i="pMig">x</button>
+  </div>
+  <p class="muted" data-i="pNote"></p>
+</section>
+
+<section id="recursos">
+  <h1 data-i="nRec2"></h1>
+  <div class="note"><span data-i="warnR"></span></div>
+  <div class="note" id="fbr" style="display:none" data-i="fbNote"></div>
+  <select id="rg" style="width:100%;margin-top:8px"></select><input type="text" id="q" style="margin-top:8px"><div class="chips" id="filtro">
+    <button class="chip" aria-pressed="true" data-f="todos" data-i="fAll">x</button>
+    <button class="chip" aria-pressed="false" data-f="asociacion" data-i="fAso">x</button>
+    <button class="chip" aria-pressed="false" data-f="asilo" data-i="fAsi">x</button>
+    <button class="chip" aria-pressed="false" data-f="familias" data-i="fFam">x</button>
+    <button class="chip" aria-pressed="false" data-f="vih" data-i="fVih">x</button>
+    <button class="chip" aria-pressed="false" data-f="mental" data-i="fMen">x</button>
+    <button class="chip" aria-pressed="false" data-f="hormonas" data-i="fHor">x</button>
+  </div>
+  <div id="lista"></div>
+</section>
+
+<section id="tramites">
+  <h1 data-i="nTra2"></h1>
+  <div class="note"><span data-i="warnT"></span></div>
+  <div class="note" id="fbt" style="display:none" data-i="fbNote"></div>
+  <div class="chips" id="tfiltro"><button class="chip" aria-pressed="true" data-g="todos" data-i="tAll">x</button><button class="chip" aria-pressed="false" data-g="vih" data-i="tVih">x</button></div>
+  <div id="tramites-lista"></div>
+</section>
+
+<section id="comunidad">
+  <h1 data-i="nCom2"></h1>
+  <p data-i="comP"></p>
+  <div class="card">
+    <h3 data-i="comH"></h3>
+    <p data-i="comB"></p>
+  </div>
+  <div class="card">
+    <h3 data-i="ideaH"></h3>
+    <p class="muted" data-i="ideaN"></p>
+    <input type="text" id="idea">
+    <p><button class="primary" id="enviar" data-i="send">x</button></p>
+    <p id="gracias" class="muted"></p>
+  </div>
+</section>
+
+<section id="ayuda">
+  <h1 data-i="nAyu2"></h1>
+  <div class="card"><h3 data-i="a1h"></h3><p data-i="a1b"></p></div>
+  <div class="card"><h3 data-i="a2h"></h3><p data-i="a2b"></p></div>
+  <div class="card"><h3 data-i="a3h"></h3><p data-i="a3b"></p></div>
+</section>
+<section id="aprender" lang="es">
+  <h1 data-i="nApr"></h1>
+  <div class="note" id="fba" style="display:none" data-i="fbNote"></div>
+  <details><summary>📖 Conceptos básicos</summary><ul><li><b>Identidad de género:</b> cómo se siente y se define cada persona (mujer, hombre, ambas, ninguna u otra).</li><li><b>Expresión de género:</b> cómo se muestra (ropa, voz, nombre, gestos). No determina la identidad.</li><li><b>Orientación sexual:</b> a quién se siente atraída afectiva y sexualmente una persona. Es independiente de la identidad de género.</li><li><b>Persona trans:</b> su identidad de género no coincide con el sexo que se le asignó al nacer.</li><li><b>Persona no binaria:</b> no se identifica solo como hombre ni solo como mujer.</li><li><b>Persona cis:</b> su identidad coincide con el sexo asignado al nacer.</li><li><b>Transición:</b> proceso social, legal o médico que cada persona vive a su manera. No hay un camino obligatorio.</li><li><b>Nombre sentido y pronombres:</b> los que cada persona quiere que se usen para dirigirse a ella.</li></ul></details>
+  <details><summary>🧩 Mitos y realidades</summary><ul><li><b>«Hay que operarse u hormonarse para ser trans».</b> Falso. Ser trans no depende de ninguna intervención médica. Además, con la Ley 4/2023 el cambio registral no exige informes médicos ni cirugía.</li><li><b>«Es una moda».</b> Hay personas trans en todas las épocas y culturas. Lo que ha cambiado es la visibilidad.</li><li><b>«Es una enfermedad mental».</b> La OMS dejó de clasificar la incongruencia de género como trastorno mental en la CIE-11.</li><li><b>«Se elige».</b> La identidad de género no se elige ni la cambian otras personas.</li><li><b>«Todas las personas trans quieren lo mismo».</b> Cada persona decide si quiere una transición social, legal o médica, y hasta dónde.</li><li><b>«Los baños y vestuarios son un peligro».</b> No hay pruebas de ello. Las personas trans suelen ser quienes sufren acoso en esos espacios.</li></ul></details>
+  <details><summary>❓ Hormonación y transición: preguntas frecuentes</summary><p><b>¿Hay que hormonarse para transicionar?</b> No. Es una opción personal.</p><p><b>¿Los cambios son reversibles?</b> Depende: algunos se revierten al parar el tratamiento y otros son permanentes. Pregunta a tu profesional qué esperar en tu caso.</p><p><b>¿Cuánto tardan en notarse?</b> Son graduales (meses o años) y varían mucho de una persona a otra.</p><p><b>¿Afecta a la fertilidad?</b> Puede reducirla. Si quieres tener hijos biológicos, habla de preservar gametos antes de empezar.</p><p><b>¿Sirve como anticonceptivo?</b> No es un método anticonceptivo fiable. Pregunta por anticoncepción si la necesitas.</p><p><b>¿Qué son los bloqueadores?</b> Medicamentos que frenan la pubertad. Solo se usan con supervisión médica especializada.</p><p class="muted">Para analíticas y reducción de riesgos, mira la sección de hormonas en Herramientas.</p></details>
+  <details><summary>🩺 Salud sexual, ginecológica y fertilidad</summary><ul><li>Las revisiones se hacen según los órganos que tengas, no según tu identidad: cribado de cuello de útero y de mama si los tienes, y de próstata si la tienes.</li><li>Puedes pedir que el centro use tu nombre sentido y avisar antes de la cita.</li><li>Para el VIH y otras ITS, mira la guía de VIH en Trámites (preservativo, PrEP, pruebas).</li><li>Si te interesa tener hijos biológicos, pregunta por la preservación de gametos antes de empezar un tratamiento.</li></ul></details>
+  <details><summary>🩹 Cirugías y cuidados posoperatorios</summary><p>Hay varias intervenciones (por ejemplo mastectomía, cirugías genitales, de feminización facial, de voz o de contorno corporal). Cada una tiene indicaciones, riesgos y recuperación distintos, y no todas las personas quieren o necesitan operarse.</p><ul><li>Pregunta en tu centro de salud qué criterios y plazos hay en tu comunidad.</li><li>Pide información sobre riesgos, complicaciones y recuperación.</li><li>Pregunta por los cuidados posoperatorios y a quién llamar si algo va mal.</li><li>Si puedes, habla con personas que ya hayan pasado por la misma intervención.</li></ul></details>
+  <details><summary>🗣️ Voz</summary><p>Un o una logopeda con experiencia en voz trans puede guiarte. Practica sin forzar: si notas dolor, ronquera persistente o cansancio al hablar, para y consulta. Beber agua y descansar la voz ayudan.</p></details>
+  <details><summary>👨‍👩‍👧 Para familiares y parejas</summary><ul><li>Escucha sin juzgar y deja que la persona marque su ritmo.</li><li>Usa su nombre y sus pronombres. Si te equivocas, discúlpate brevemente y sigue.</li><li>No cuentes nada a otras personas sin su permiso.</li><li>Infórmate por tu cuenta en lugar de pedirle que te lo explique todo.</li><li>Busca apoyo para ti: Chrysallis acompaña a familias de menores trans, y las asociaciones de la pestaña Recursos atienden a familias y parejas.</li></ul></details>
+  <details><summary>🏫 Para docentes y empresas</summary><ul><li><b>Docentes:</b> usa el nombre sentido en listas y comunicaciones, no obligues a nadie a explicarse, actúa ante el acoso y evita separar por género sin necesidad.</li><li><b>Empresas:</b> respeta el nombre en el correo, la tarjeta y los turnos, protege la confidencialidad de los datos, ten un protocolo contra el acoso y ofrece baños y vestuarios accesibles.</li><li>Pide formación a una asociación LGTBI de tu zona.</li></ul></details>
+  <details><summary>⚖️ Derechos y qué hacer ante una discriminación</summary><p>La Ley 4/2023 recoge medidas contra la discriminación por identidad de género en el trabajo, la educación y la sanidad. Tienes el enlace al texto del BOE en Trámites.</p><p><b>Si sufres discriminación:</b></p><ul><li>Guarda pruebas: capturas, mensajes, fechas y nombres de testigos.</li><li>Pide la hoja de reclamaciones del servicio o presenta un escrito (modelo más abajo).</li><li>Acude a una asociación: pueden orientarte y acompañarte.</li></ul><p><b>Si sufres una agresión:</b></p><ul><li>En peligro inmediato, llama al 112.</li><li>Pide atención médica y un parte de lesiones.</li><li>Puedes denunciar en una comisaría, en el juzgado de guardia o ante la Fiscalía. Pide copia de la denuncia.</li><li>Si tu situación administrativa es irregular, consúltalo antes con una asociación o una asesoría legal.</li></ul><p class="muted">Información orientativa, no es asesoría legal.</p></details>
+  <div class="card"><h3>📝 Modelo de reclamación</h3>
+    <p class="muted">Se genera aquí y no se guarda. Revísalo antes de enviarlo.</p>
+    <select id="r0" style="width:100%"><option>discriminación en un centro sanitario</option><option>discriminación en el trabajo</option><option>discriminación en un centro educativo</option><option>un trato discriminatorio en un servicio</option></select>
+    <input type="text" id="r1" placeholder="Tu nombre"><input type="text" id="r2" placeholder="Entidad o servicio"><input type="text" id="r3" placeholder="Qué ocurrió, cuándo y dónde">
+    <textarea id="rtxt" readonly rows="10"></textarea>
+    <p><button class="primary" id="rcopy">Copiar texto</button> <span class="muted" id="rmsg"></span></p></div>
+  <div class="card"><h3>🩺 Prepara tu consulta</h3>
+    <select id="q0" style="width:100%"><option value="endo">Endocrinología</option><option value="psi">Psicología</option><option value="log">Logopedia</option><option value="leg">Asesoría legal</option></select>
+    <ul id="qlist"></ul></div>
+  <div class="card"><h3>💶 Calculadora de gastos</h3>
+    <input type="text" inputmode="decimal" id="g1" placeholder="Consultas y analíticas (€ al mes)"><input type="text" inputmode="decimal" id="g2" placeholder="Medicación (€ al mes)"><input type="text" inputmode="decimal" id="g3" placeholder="Trámites y asesoría (€, una vez)"><input type="text" inputmode="decimal" id="g4" placeholder="Otros gastos (€, una vez)"><input type="text" inputmode="decimal" id="g5" placeholder="Meses a planificar">
+    <div class="note" id="gres" style="white-space:pre-line"></div></div>
+  <div class="card"><h3>🔐 Tu privacidad</h3><ul><li>Usa la navegación privada y borra el historial si compartes el móvil.</li><li>Bloquea el teléfono y no compartas capturas con datos personales.</li><li>Esta página no pide registro ni guarda lo que escribes. El botón rojo de «Salida rápida» está siempre arriba.</li></ul></div>
+</section>
+<section id="mas" lang="es">
+  <h1 data-i="nMas"></h1>
+  <div class="note" id="fbm" style="display:none" data-i="fbNote"></div>
+  <p><button class="chip" data-go="aprender">📚 Ir a Aprender: glosario, derechos y guías</button></p>
+  <div class="card"><h3>🪪 Tarjeta de emergencia</h3>
+    <p class="muted">Rellénala y haz una captura de pantalla para tenerla en el móvil. No se guarda en ningún sitio.</p>
+    <input type="text" id="e1" placeholder="Nombre sentido"><input type="text" id="e2" placeholder="Pronombres"><input type="text" id="e3" placeholder="Alergias y medicación (por ejemplo, hormonas)"><input type="text" id="e4" placeholder="Contacto de confianza (nombre y teléfono)"><input type="text" id="e5" placeholder="Idiomas que hablo">
+    <div class="note" id="ecard" style="white-space:pre-line"></div></div>
+  <div class="card"><h3>✉️ Carta para pedir que usen tu nombre</h3>
+    <p class="muted">Para un centro de salud, un colegio, una empresa o cualquier servicio. Se genera aquí y no se guarda.</p>
+    <input type="text" id="l1" placeholder="Tu nombre sentido"><input type="text" id="l2" placeholder="Tus pronombres"><input type="text" id="l3" placeholder="Servicio o centro al que escribes">
+    <textarea id="ltxt" readonly rows="9"></textarea>
+    <p><button class="primary" id="lcopy">Copiar texto</button> <span class="muted" id="lmsg"></span></p></div>
+  <div class="card"><h3>✅ Primeros pasos al llegar a España</h3>
+    <p class="muted">Las casillas solo se mantienen mientras tengas la página abierta.</p><div id="chk"></div></div>
+  <div class="card"><h3>📖 Palabras útiles</h3><div id="glo" style="overflow-x:auto"></div></div>
+  <div class="card"><h3>💊 Hormonas: información y reducción de riesgos</h3>
+    <div class="note">⚠️ Esta sección no recomienda dosis ni vende nada. Lo más seguro es un tratamiento con seguimiento médico. Si estás pensando en tomar hormonas por tu cuenta, o ya lo haces, aquí tienes información para reducir riesgos. No sustituye a un profesional sanitario.</div>
+    <details><summary>Antes de empezar</summary><ul><li>Si puedes, pide cita en tu centro de salud o en una unidad de identidad de género. El acceso varía según la comunidad autónoma.</li><li>Una analítica previa (sangre, hígado, glucosa, lípidos y, según el caso, prolactina o hematocrito) permite detectar riesgos antes de empezar.</li><li>Conviene hablarlo con un profesional si fumas, has tenido trombos, tienes tensión alta, diabetes, migrañas con aura, enfermedad del hígado o del corazón, o un cáncer sensible a hormonas.</li></ul></details>
+    <details><summary>Conseguir la medicación con seguridad</summary><ul><li>En España son medicamentos con receta. Conseguirlos sin ella supone riesgos de calidad y también legales.</li><li>Los viales sin etiqueta o comprados por internet o redes pueden estar falsificados, mal dosificados o contaminados.</li><li>Comprueba nombre, principio activo, concentración, lote, caducidad y precinto.</li><li>No compartas medicación ni agujas, y no mezcles productos por consejo de foros sin consultarlo antes.</li></ul></details>
+    <details><summary>Inyectables: higiene básica</summary><ul><li>Lávate las manos y usa aguja y jeringa estériles nuevas cada vez. No se reutilizan ni se comparten.</li><li>Desinfecta el tapón del vial y la piel, y cambia de zona de inyección.</li><li>Pide a una enfermera o a un farmacéutico que te enseñe la técnica antes de la primera vez.</li><li>Guarda las agujas usadas en un contenedor rígido y pregunta en tu farmacia o centro de salud dónde entregarlo.</li><li>Si hay enrojecimiento, calor, pus o fiebre, consulta.</li></ul></details>
+    <details><summary>Controles y analíticas</summary><p>Las guías clínicas recomiendan revisar cada 3 meses durante el primer año y después una o dos veces al año. Se mide testosterona y estradiol en tratamientos feminizantes, y testosterona y hematocrito en los masculinizantes.</p><p><b>Rangos de referencia de las guías:</b></p><ul><li>Tratamiento feminizante: testosterona total por debajo de 50 ng/dL (1,7 nmol/L) y estradiol entre 100 y 200 pg/mL (367–734 pmol/L).</li><li>Tratamiento masculinizante: testosterona total en el rango masculino (300–1000 ng/dL; en inyectables, objetivo de 400–700 ng/dL medido a mitad del intervalo) y hematocrito por debajo del 50 %.</li></ul><p class="muted">Son objetivos orientativos. Cada laboratorio tiene sus propios rangos y los resultados debe interpretarlos un profesional.</p></details>
+    <details><summary>Señales de alarma: urgencias o 112</summary><ul><li>Dolor, hinchazón o enrojecimiento en una pierna.</li><li>Dolor en el pecho o falta de aire.</li><li>Dolor de cabeza muy intenso y repentino, debilidad, o problemas para hablar o ver.</li><li>Piel u ojos amarillos.</li><li>Si te sientes muy mal emocionalmente o piensas en hacerte daño, llama al 024 o al 112.</li></ul></details>
+    <details><summary>Interacciones con otros medicamentos</summary><p>Cuéntaselo siempre a tu médico o farmacéutico si tomas PrEP o antirretrovirales, anticonceptivos, antidepresivos u otros fármacos. Algunos cambian el efecto de las hormonas o al revés.</p></details>
+    <details><summary>Si tienes menos de 18 años</summary><p>Tomar hormonas sin supervisión es especialmente arriesgado. Existen vías de atención para menores: puedes pedir ayuda a Chrysallis o a la línea ANAR (900 20 20 10).</p></details>
+    <details><summary>Cómo acceder a atención con seguimiento</summary><p>Pregunta en tu centro de salud por la unidad de identidad de género de tu comunidad, consulta a una asociación de tu zona (pestaña Recursos, filtro «Hormonas») o busca un endocrinólogo privado. Lleva la guía clínica de la Endocrine Society, que tienes enlazada en Recursos.</p></details>
+  </div>
+  <div class="card"><h3>🧮 Calculadoras</h3>
+    <p class="muted">Convierten datos. La dosis la decide tu profesional sanitario según tu analítica y tu salud.</p>
+    <h2 style="margin-top:8px">Volumen a inyectar</h2>
+    <input type="text" inputmode="decimal" id="d1" placeholder="Dosis indicada (mg)"><input type="text" inputmode="decimal" id="d2" placeholder="Concentración del vial (mg/mL)"><input type="text" inputmode="decimal" id="d3" placeholder="Contenido del vial (mL), opcional">
+    <div class="note" id="dres" style="white-space:pre-line"></div>
+    <h2>Conversor de unidades de analítica</h2>
+    <select id="u1" style="width:100%"><option value="0">Estradiol: pg/mL → pmol/L</option><option value="1">Estradiol: pmol/L → pg/mL</option><option value="2">Testosterona total: ng/dL → nmol/L</option><option value="3">Testosterona total: nmol/L → ng/dL</option></select>
+    <input type="text" inputmode="decimal" id="u2" placeholder="Valor de tu analítica">
+    <div class="note" id="ures"></div></div>
+  <div class="card"><h3>🚀 Próximamente</h3><div id="soon" class="chips"></div>
+    <p class="muted">¿Cuál te interesa más? Cuéntalo en Comunidad.</p>
+    <p><button class="chip" data-go="comunidad">💬 Ir a Comunidad</button></p></div>
+</section>
+</div>
+
+<nav><div>
+  <button data-go="inicio" aria-current="true"><span>🏠</span><i data-i="bI"></i></button>
+  <button data-go="recursos"><span>🧭</span><i data-i="bR"></i></button>
+  <button data-go="tramites"><span>📄</span><i data-i="bT"></i></button>
+  <button data-go="comunidad"><span>💬</span><i data-i="bC"></i></button>
+  <button data-go="ayuda"><span>🆘</span><i data-i="bA"></i></button>
+  <button data-go="mas"><span>✨</span><i data-i="bM"></i></button>
+</div></nav>
+
+<script>
+var lang="es";
+var T={
+ca:{lnk:"Web oficial",srch:"Cerca al web",fHor:"Hormones i salut trans",nApr:"📚 Aprendre",dApr:"Glossari, mites, drets, guies",call:"Truca",fMen:"Salut mental",nMas:"✨ Eines",bM:"Més",dMas:"Targeta d’emergència, cartes, glossari",rg:"Comunitat autònoma",rgAll:"Tot Espanya",fbNote:"Contingut pendent de traducció revisada; es mostra en castellà.",fVih:"VIH i salut sexual",tAll:"Tots",tVih:"VIH i salut sexual",exit:"Sortida ràpida",hi:"Et donem la benvinguda",sub:"Informació i suport per a persones trans que viuen a Espanya, hagis nascut aquí o hagis arribat d’un altre lloc.",priv:"🔒 Aquesta app no demana registre ni guarda cap dada teva. El botó vermell et treu de la pàgina a l’instant.",nRec:"🧭 Recursos",dRec:"Associacions, asil, famílies",nTra:"📄 Tràmits",dTra:"DNI, salut, asil, padró",nCom:"💬 Comunitat",dCom:"Trobada i suport",nAyu:"🆘 Ajuda urgent",dAyu:"Si ets en perill",sit:"Quina és la teva situació?",pAll:"Totes",pNac:"Visc aquí amb documentació",pMig:"Acabo d’arribar o sóc migrant",pNote:"Això només filtra la informació que veus. No s’envia enlloc.",nRec2:"Recursos",nTra2:"Tràmits",nCom2:"Comunitat",nAyu2:"Ajuda urgent",warnR:"⚠️ Les dades de contacte s’han de verificar abans de publicar. Aquí es mostren organitzacions reals com a punt de partida.",warnT:"⚠️ Informació orientativa, no és assessorament legal. La normativa canvia: confirma-ho sempre amb una associació o un servei jurídic.",fAll:"Tots",fAso:"Associacions",fAsi:"Asil i migració",fFam:"Famílies",q:"Cerca…",none:"Encara no hi ha resultats.",comP:"Aquí hi haurà un espai per conèixer gent i ajudar-nos entre persones trans d’Espanya, també entre qui arriba i qui fa temps que hi viu.",comH:"Com ens ho imaginem",comB:"Grups per ciutat i llengua, mentoria entre iguals i esdeveniments. Moderació activa i opció d’usar només un àlies.",ideaH:"Explica’ns què necessites",ideaN:"El que escriguis no es guarda en aquesta versió.",idea:"M’agradaria que l’app tingués…",send:"Envia la idea",thanks:"Gràcies! En aquesta versió la idea no es guarda, però el formulari funcionarà així.",a1h:"Emergències: 112",a1b:"Si tu o algú esteu en perill immediat, truca al 112. Funciona a tot Espanya, sigui quina sigui la teva situació administrativa.",a2h:"Violència o discriminació",a2b:"Pots demanar ajuda a una associació LGBTI de la teva zona. És un bon primer pas i hi ha serveis d’atenció gratuïts.",a3h:"Si et trobes malament per dins",a3b:"Parla amb algú de confiança o amb un servei de suport emocional. No has de passar per això sense suport.",bI:"Inici",bR:"Recursos",bT:"Tràmits",bC:"Comunitat",bA:"Ajuda"},
+gl:{lnk:"Web oficial",srch:"Buscar na web",fHor:"Hormonas e saúde trans",nApr:"📚 Aprender",dApr:"Glosario, mitos, dereitos, guías",call:"Chamar",fMen:"Saúde mental",nMas:"✨ Ferramentas",bM:"Máis",dMas:"Tarxeta de emerxencia, cartas, glosario",rg:"Comunidade autónoma",rgAll:"Toda España",fbNote:"Contido pendente de tradución revisada; amósase en castelán.",fVih:"VIH e saúde sexual",tAll:"Todos",tVih:"VIH e saúde sexual",exit:"Saída rápida",hi:"Benvida, benvido, benvide",sub:"Información e apoio para persoas trans que viven en España, naceses aquí ou chegases de fóra.",priv:"🔒 Esta app non pide rexistro nin garda ningún dato teu. O botón vermello sácache da páxina ao instante.",nRec:"🧭 Recursos",dRec:"Asociacións, asilo, familias",nTra:"📄 Trámites",dTra:"DNI, saúde, asilo, padrón",nCom:"💬 Comunidade",dCom:"Encontro e apoio",nAyu:"🆘 Axuda urxente",dAyu:"Se estás en perigo",sit:"Cal é a túa situación?",pAll:"Todas",pNac:"Vivo aquí con documentación",pMig:"Acabo de chegar ou son migrante",pNote:"Isto só filtra a información que ves. Non se envía a ningún sitio.",nRec2:"Recursos",nTra2:"Trámites",nCom2:"Comunidade",nAyu2:"Axuda urxente",warnR:"⚠️ Os datos de contacto deben verificarse antes de publicar. Aquí amósanse organizacións reais como punto de partida.",warnT:"⚠️ Información orientativa, non é asesoramento legal. A normativa cambia: confirma sempre cunha asociación ou un servizo xurídico.",fAll:"Todos",fAso:"Asociacións",fAsi:"Asilo e migración",fFam:"Familias",q:"Buscar…",none:"Aínda non hai resultados.",comP:"Aquí haberá un espazo para coñecer xente e axudarnos entre persoas trans de España, tamén entre quen chega e quen leva tempo aquí.",comH:"Como o imaxinamos",comB:"Grupos por cidade e idioma, mentoría entre iguais e eventos. Moderación activa e opción de usar só un alias.",ideaH:"Cóntanos que necesitas",ideaN:"O que escribas non se garda nesta versión.",idea:"Gustaríame que a app tivese…",send:"Enviar idea",thanks:"Grazas! Nesta versión a idea non se garda, pero así funcionará o formulario.",a1h:"Emerxencias: 112",a1b:"Se ti ou alguén estades en perigo inmediato, chama ao 112. Funciona en toda España, sexa cal for a túa situación administrativa.",a2h:"Violencia ou discriminación",a2b:"Podes pedir axuda a unha asociación LGBTI da túa zona. É un bo primeiro paso e hai servizos de atención gratuítos.",a3h:"Se estás mal por dentro",a3b:"Fala con alguén de confianza ou cun servizo de apoio emocional. Non tes que pasar por isto sen apoio.",bI:"Inicio",bR:"Recursos",bT:"Trámites",bC:"Comunidade",bA:"Axuda"},
+eu:{lnk:"Webgune ofiziala",srch:"Bilatu webean",fHor:"Hormonak eta osasun trans",nApr:"📚 Ikasi",dApr:"Glosarioa, mitoak, eskubideak, gidak",call:"Deitu",fMen:"Osasun mentala",nMas:"✨ Tresnak",bM:"Gehiago",dMas:"Larrialdi txartela, gutunak, glosarioa",rg:"Autonomia erkidegoa",rgAll:"Espainia osoa",fbNote:"Edukia itzulpen berrikusiaren zain dago; gaztelaniaz erakusten da.",fVih:"GIB eta sexu-osasuna",tAll:"Guztiak",tVih:"GIB eta sexu-osasuna",exit:"Irteera azkarra",hi:"Ongi etorri",sub:"Espainian bizi diren pertsona transentzako informazioa eta laguntza, hemen jaio zaren edo kanpotik etorri zaren.",priv:"🔒 App honek ez du izen-ematerik eskatzen eta ez du zure daturik gordetzen. Botoi gorriak orritik berehala ateratzen zaitu.",nRec:"🧭 Baliabideak",dRec:"Elkarteak, asiloa, familiak",nTra:"📄 Izapideak",dTra:"NAN, osasuna, asiloa, erroldatzea",nCom:"💬 Komunitatea",dCom:"Topaketa eta laguntza",nAyu:"🆘 Premiazko laguntza",dAyu:"Arriskuan bazaude",sit:"Zein da zure egoera?",pAll:"Guztiak",pNac:"Hemen bizi naiz dokumentuekin",pMig:"Oraintxe iritsi naiz edo migratzailea naiz",pNote:"Honek ikusten duzun informazioa soilik iragazten du. Ez da inora bidaltzen.",nRec2:"Baliabideak",nTra2:"Izapideak",nCom2:"Komunitatea",nAyu2:"Premiazko laguntza",warnR:"⚠️ Argitaratu aurretik harremanetarako datuak egiaztatu behar dira. Benetako erakundeak erakusten dira abiapuntu gisa.",warnT:"⚠️ Informazio orientagarria da, ez aholkularitza juridikoa. Araudia aldatzen da: baieztatu beti elkarte batekin edo zerbitzu juridiko batekin.",fAll:"Guztiak",fAso:"Elkarteak",fAsi:"Asiloa eta migrazioa",fFam:"Familiak",q:"Bilatu…",none:"Oraindik ez dago emaitzarik.",comP:"Hemen espazio bat egongo da jendea ezagutzeko eta Espainiako pertsona transok elkarri laguntzeko, bai iristen direnen artean bai aspalditik bizi direnen artean.",comH:"Nola irudikatzen dugun",comB:"Hiriaren eta hizkuntzaren araberako taldeak, pareen arteko mentoretza eta ekitaldiak. Moderazio aktiboa eta ezizen bat soilik erabiltzeko aukera.",ideaH:"Kontatu zer behar duzun",ideaN:"Idazten duzuna ez da bertsio honetan gordetzen.",idea:"Nahiko nuke appak hau izatea…",send:"Bidali ideia",thanks:"Eskerrik asko! Bertsio honetan ideia ez da gordetzen, baina formularioak horrela funtzionatuko du.",a1h:"Larrialdiak: 112",a1b:"Zu edo beste norbait berehalako arriskuan bazaudete, deitu 112ra. Espainia osoan dabil, zure egoera administratiboa edozein dela ere.",a2h:"Indarkeria edo diskriminazioa",a2b:"Zure inguruko LGTBI elkarte bati laguntza eska diezaiokezu. Lehen urrats ona da eta doako arreta zerbitzuak daude.",a3h:"Barrutik gaizki bazaude",a3b:"Hitz egin konfiantzazko norbaitekin edo laguntza emozionaleko zerbitzu batekin. Ez duzu hori laguntzarik gabe igaro behar.",bI:"Hasiera",bR:"Baliabideak",bT:"Izapideak",bC:"Komunitatea",bA:"Laguntza"},
+es:{lnk:"Web oficial",srch:"Buscar en la web",fHor:"Hormonas y salud trans",nApr:"📚 Aprender",dApr:"Glosario, mitos, derechos, guías",call:"Llamar",fMen:"Salud mental",nMas:"✨ Herramientas",bM:"Más",dMas:"Tarjeta de emergencia, cartas, glosario",moreRg:"¿No ves tu zona? La FELGTBI+ agrupa a asociaciones de muchas comunidades autónomas: consulta sus entidades.",law:"Texto de la ley (BOE)",rg:"Comunidad autónoma",rgAll:"Toda España",fbNote:"Contenido pendiente de traducción revisada; se muestra en castellano.",fVih:"VIH y salud sexual",tAll:"Todos",tVih:"VIH y salud sexual",exit:"Salida rápida",hi:"Bienvenida, bienvenido, bienvenide",sub:"Información y apoyo para personas trans que viven en España, hayas nacido aquí o hayas llegado de fuera.",priv:"🔒 Esta app no pide registro ni guarda datos tuyos. El botón rojo te saca de la página al instante.",nRec:"🧭 Recursos",dRec:"Asociaciones, asilo, familias",nTra:"📄 Trámites",dTra:"DNI, salud, asilo, padrón",nCom:"💬 Comunidad",dCom:"Encuentro y apoyo",nAyu:"🆘 Ayuda urgente",dAyu:"Si estás en peligro",sit:"¿Cuál es tu situación?",pAll:"Todas",pNac:"Vivo aquí con documentación",pMig:"Acabo de llegar o soy migrante",pNote:"Esto solo filtra la información que ves. No se envía a ningún sitio.",nRec2:"Recursos",nTra2:"Trámites",nCom2:"Comunidad",nAyu2:"Ayuda urgente",warnR:"⚠️ Los datos y enlaces deben verificarse antes de publicar. Aquí se muestran organizaciones reales como punto de partida.",warnT:"⚠️ Información orientativa, no es asesoría legal. La normativa cambia: confirma siempre con una asociación o un servicio jurídico.",fAll:"Todos",fAso:"Asociaciones",fAsi:"Asilo y migración",fFam:"Familias",q:"Buscar…",none:"No hay resultados todavía.",comP:"Aquí irá un espacio para conocer gente y ayudarnos entre personas trans de España, también entre quienes llegan y quienes ya llevan tiempo aquí.",comH:"Cómo lo imaginamos",comB:"Grupos por ciudad e idioma, mentoría entre pares y eventos. Moderación activa y opción de usar solo un alias.",ideaH:"Cuéntanos qué necesitas",ideaN:"Lo que escribas no se guarda en esta versión.",idea:"Me gustaría que la app tuviera…",send:"Enviar idea",thanks:"¡Gracias! En esta versión la idea no se guarda, pero así será el formulario.",a1h:"Emergencias: 112",a1b:"Si tú o alguien está en peligro inmediato, llama al 112. Funciona en toda España y sin importar tu situación administrativa.",a2h:"Violencia o discriminación",a2b:"Puedes pedir ayuda a una asociación LGTBI de tu zona. Es un buen primer paso y existen servicios de atención gratuitos.",a3h:"Si estás mal por dentro",a3b:"Habla con alguien de confianza o con un servicio de apoyo emocional. No tienes que pasar por esto sin apoyo.",bI:"Inicio",bR:"Recursos",bT:"Trámites",bC:"Comunidad",bA:"Ayuda"},
+en:{lnk:"Official website",srch:"Search the web",fHor:"Hormones and trans health",nApr:"📚 Learn",dApr:"Glossary, myths, rights, guides",call:"Call",fMen:"Mental health",nMas:"✨ Tools",bM:"More",dMas:"Emergency card, letters, glossary",rg:"Region",rgAll:"All of Spain",fbNote:"Content awaiting a reviewed translation; shown in Spanish.",fVih:"HIV and sexual health",tAll:"All",tVih:"HIV and sexual health",exit:"Quick exit",hi:"Welcome",sub:"Information and support for trans people living in Spain, whether you were born here or arrived from elsewhere.",priv:"🔒 This app asks for no sign-up and stores none of your data. The red button takes you off the page instantly.",nRec:"🧭 Resources",dRec:"Organisations, asylum, families",nTra:"📄 Procedures",dTra:"ID, healthcare, asylum, registration",nCom:"💬 Community",dCom:"Meet and support each other",nAyu:"🆘 Urgent help",dAyu:"If you are in danger",sit:"What is your situation?",pAll:"All",pNac:"I live here with documents",pMig:"I just arrived or I am a migrant",pNote:"This only filters what you see. Nothing is sent anywhere.",nRec2:"Resources",nTra2:"Procedures",nCom2:"Community",nAyu2:"Urgent help",warnR:"⚠️ Contact details must be verified before publishing. These are real nationwide organisations shown as a starting point.",warnT:"⚠️ General guidance, not legal advice. Rules change: always confirm with an association or a legal service.",fAll:"All",fAso:"Associations",fAsi:"Asylum and migration",fFam:"Families",q:"Search…",none:"No results yet.",comP:"This will be a space to meet people and support each other among trans people in Spain, newcomers and long-time residents alike.",comH:"How we imagine it",comB:"Groups by city and language, peer mentoring and events. Active moderation and the option to use only an alias.",ideaH:"Tell us what you need",ideaN:"What you write is not saved in this version.",idea:"I would like the app to have…",send:"Send idea",thanks:"Thank you! In this version the idea is not saved, but this is how the form will work.",a1h:"Emergencies: 112",a1b:"If you or someone else is in immediate danger, call 112. It works across Spain regardless of your administrative status.",a2h:"Violence or discrimination",a2b:"You can ask an LGBTI association near you for help. It is a good first step, and free support services exist.",a3h:"If you are not okay inside",a3b:"Talk to someone you trust or to an emotional support service. You do not have to go through this without support.",bI:"Home",bR:"Resources",bT:"Procedures",bC:"Community",bA:"Help"},
+fr:{lnk:"Site officiel",srch:"Rechercher sur le web",fHor:"Hormones et santé trans",nApr:"📚 Apprendre",dApr:"Glossaire, mythes, droits, guides",call:"Appeler",fMen:"Santé mentale",nMas:"✨ Outils",bM:"Plus",dMas:"Carte d’urgence, lettres, glossaire",rg:"Communauté autonome",rgAll:"Toute l’Espagne",fbNote:"Contenu en attente d’une traduction relue ; affiché en espagnol.",fVih:"VIH et santé sexuelle",tAll:"Tous",tVih:"VIH et santé sexuelle",exit:"Sortie rapide",hi:"Bienvenue",sub:"Informations et soutien pour les personnes trans qui vivent en Espagne, que vous soyez né ici ou arrivé d’ailleurs.",priv:"🔒 Cette appli ne demande aucune inscription et ne garde aucune donnée. Le bouton rouge vous fait quitter la page immédiatement.",nRec:"🧭 Ressources",dRec:"Associations, asile, familles",nTra:"📄 Démarches",dTra:"Papiers, santé, asile, inscription",nCom:"💬 Communauté",dCom:"Se retrouver et s’entraider",nAyu:"🆘 Aide urgente",dAyu:"Si vous êtes en danger",sit:"Quelle est votre situation ?",pAll:"Toutes",pNac:"Je vis ici avec des papiers",pMig:"Je viens d’arriver ou je suis migrant·e",pNote:"Cela ne filtre que ce que vous voyez. Rien n’est envoyé.",nRec2:"Ressources",nTra2:"Démarches",nCom2:"Communauté",nAyu2:"Aide urgente",warnR:"⚠️ Les coordonnées doivent être vérifiées avant publication. Ce sont de vraies organisations nationales, présentées comme point de départ.",warnT:"⚠️ Informations générales, pas un conseil juridique. Les règles changent : confirmez toujours auprès d’une association ou d’un service juridique.",fAll:"Tous",fAso:"Associations",fAsi:"Asile et migration",fFam:"Familles",q:"Rechercher…",none:"Aucun résultat pour l’instant.",comP:"Ce sera un espace pour se rencontrer et s’entraider entre personnes trans d’Espagne, nouvelles arrivées comme anciennes résidentes.",comH:"Comment nous l’imaginons",comB:"Groupes par ville et par langue, mentorat entre pairs et événements. Modération active et possibilité d’utiliser un simple pseudo.",ideaH:"Dites-nous ce dont vous avez besoin",ideaN:"Ce que vous écrivez n’est pas enregistré dans cette version.",idea:"J’aimerais que l’appli ait…",send:"Envoyer l’idée",thanks:"Merci ! Dans cette version l’idée n’est pas enregistrée, mais le formulaire fonctionnera ainsi.",a1h:"Urgences : 112",a1b:"Si vous ou quelqu’un êtes en danger immédiat, appelez le 112. Il fonctionne dans toute l’Espagne, quelle que soit votre situation administrative.",a2h:"Violence ou discrimination",a2b:"Vous pouvez demander l’aide d’une association LGBTI près de chez vous. C’est un bon premier pas et il existe des services gratuits.",a3h:"Si vous allez mal intérieurement",a3b:"Parlez à une personne de confiance ou à un service de soutien psychologique. Vous n’avez pas à traverser cela sans soutien.",bI:"Accueil",bR:"Ressources",bT:"Démarches",bC:"Communauté",bA:"Aide"}};
+var RECURSOS=[
+{u:"https://felgtbi.org",n:"FELGTBI+",d:{es:"Federación estatal de organizaciones LGTBI+. Información y red de entidades por toda España.",en:"National federation of LGBTI+ organisations. Information and a network of groups across Spain.",fr:"Fédération nationale d’organisations LGBTI+. Informations et réseau d’associations dans toute l’Espagne."},t:["asociacion"],p:["nacional","migrante"]},
+{u:"https://fundaciontriangulo.org",n:"Fundación Triángulo",d:{es:"Atención, asesoría y acompañamiento a personas LGTBI, con programas para personas migrantes.",en:"Support, advice and accompaniment for LGBTI people, with programmes for migrants.",fr:"Accueil, conseil et accompagnement des personnes LGBTI, avec des programmes pour les migrant·es."},t:["asociacion","asilo"],p:["nacional","migrante"]},
+{u:"https://chrysallis.org.es",n:"Chrysallis",d:{es:"Asociación de familias de menores trans. Apoyo a madres, padres y menores.",en:"Association of families of trans minors. Support for parents and young people.",fr:"Association de familles de mineur·es trans. Soutien aux parents et aux jeunes."},t:["familias"],p:["nacional"]},
+{u:"https://www.cear.es",n:"CEAR",d:{es:"Comisión Española de Ayuda al Refugiado. Orientación sobre protección internacional y asilo.",en:"Spanish Commission for Refugee Aid. Guidance on international protection and asylum.",fr:"Commission espagnole d’aide aux réfugiés. Orientation sur la protection internationale et l’asile."},t:["asilo"],p:["migrante"]},
+{u:"https://www.accem.es",n:"Accem",d:{es:"Atención a personas migrantes y solicitantes de asilo, con programas específicos de diversidad.",en:"Support for migrants and asylum seekers, with specific diversity programmes.",fr:"Accompagnement des migrant·es et demandeurs d’asile, avec des programmes sur la diversité."},t:["asilo"],p:["migrante"]}
+,
+{u:"https://cesida.org",n:"CESIDA",d:{es:"Coordinadora estatal de VIH y sida. Información, defensa de derechos y red de entidades.",en:"National coordinator of HIV and AIDS groups. Information, rights advocacy and a network of organisations.",fr:"Coordination nationale VIH et sida. Informations, défense des droits et réseau d’associations."},t:["vih"],p:["nacional","migrante"]},
+{u:"https://apoyopositivo.org",n:"Apoyo Positivo",d:{es:"Apoyo a personas con VIH: acompañamiento, pruebas rápidas y prevención.",en:"Support for people living with HIV: accompaniment, rapid testing and prevention.",fr:"Soutien aux personnes vivant avec le VIH : accompagnement, dépistage rapide et prévention."},t:["vih"],p:["nacional","migrante"]},
+{u:"https://stopsida.org",n:"Stop Sida",d:{es:"Entidad comunitaria de Barcelona: pruebas, prevención y apoyo a personas LGTBI.",en:"Community organisation in Barcelona: testing, prevention and support for LGBTI people.",fr:"Association communautaire de Barcelone : dépistage, prévention et soutien aux personnes LGBTI."},t:["vih"],p:["nacional","migrante"]},
+{u:"https://www.medicosdelmundo.org",n:"Médicos del Mundo",d:{es:"Orientación sobre el acceso a la sanidad para personas migrantes, incluida la atención del VIH.",en:"Guidance on access to healthcare for migrants, including HIV care.",fr:"Orientation sur l’accès aux soins pour les migrant·es, y compris la prise en charge du VIH."},t:["vih","asilo"],p:["migrante"]}
+,
+{r:"madrid",u:"https://cogam.es",n:"COGAM",d:{es:"Colectivo LGTBI+ de Madrid: información, asesoría y grupos de apoyo."},t:["asociacion"],p:["nacional","migrante"]},
+{r:"madrid",n:"Transexualia",d:{es:"Asociación de Transexuales de España, con sede en Madrid: apoyo y asesoría."},t:["asociacion"],p:["nacional","migrante"]},
+{r:"madrid",n:"Centro Sanitario Sandoval",d:{es:"Centro público de Madrid especializado en infecciones de transmisión sexual y VIH, con pruebas gratuitas."},t:["vih"],p:["nacional","migrante"]},
+{r:"cat",u:"https://www.casallambda.org",n:"Casal Lambda",d:{es:"Entidad LGTBI de Barcelona con servicios de información y acompañamiento."},t:["asociacion"],p:["nacional","migrante"]},
+{r:"cat",n:"Observatori contra l’Homofòbia",d:{es:"Atención y denuncia de casos de discriminación LGTBIfóbica en Cataluña."},t:["asociacion"],p:["nacional","migrante"]},
+{r:"cat",n:"Servicio Trànsit",d:{es:"Servicio de atención a la salud trans del sistema sanitario catalán."},t:["asociacion","hormonas"],p:["nacional","migrante"]},
+{r:"val",u:"https://lambdavalencia.org",n:"Lambda València",d:{es:"Colectivo LGTBI de València: información, acogida y asesoría."},t:["asociacion"],p:["nacional","migrante"]},
+{r:"and",n:"Unidad de Identidad de Género de Málaga",d:{es:"Unidad de referencia del sistema sanitario público andaluz para la atención a personas trans."},t:["asociacion","hormonas"],p:["nacional","migrante"]},
+{r:"eus",u:"https://www.aldarte.org",n:"Aldarte",d:{es:"Centro de atención a personas LGTBI en Bilbao."},t:["asociacion"],p:["nacional","migrante"]},
+{r:"eus",n:"Gehitu",d:{es:"Asociación LGTBI de Gipuzkoa con servicio de atención y asesoría."},t:["asociacion"],p:["nacional","migrante"]},
+{r:"gal",n:"Alas A Coruña",d:{es:"Asociación LGTBI de A Coruña con información y acompañamiento."},t:["asociacion"],p:["nacional","migrante"]},
+{r:"ast",u:"https://xega.org",n:"Xega",d:{es:"Asociación LGTBI de Asturias con información y atención."},t:["asociacion"],p:["nacional","migrante"]},
+{r:"bal",u:"https://www.benamics.com",n:"Ben Amics",d:{es:"Entidad LGTBI de las Islas Baleares: información, asesoría y acompañamiento."},t:["asociacion"],p:["nacional","migrante"]},
+{r:"can",u:"https://fundaciontriangulo.org",n:"Fundación Triángulo Canarias",d:{es:"Delegación de la Fundación Triángulo en Canarias: atención e información."},t:["asociacion"],p:["nacional","migrante"]},
+{r:"nav",u:"https://kattalingorri.org",n:"Kattalingorri",d:{es:"Asociación LGTBI de Navarra con atención y asesoría."},t:["asociacion"],p:["nacional","migrante"]},
+{r:"mur",u:"https://noteprives.org",n:"Colectivo No Te Prives",d:{es:"Colectivo LGTBI de la Región de Murcia: información y apoyo."},t:["asociacion"],p:["nacional","migrante"]}
+,
+{u:"https://www.cruzroja.es",n:"Cruz Roja Española",d:{es:"Atención a personas migrantes y solicitantes de protección internacional: acogida, orientación y ayuda básica."},t:["asilo"],p:["migrante"]},
+{u:"https://www.rainbowrailroad.org",n:"Rainbow Railroad",d:{es:"Organización internacional que ayuda a personas LGBTQI+ que huyen de la persecución. Se puede pedir ayuda desde su web."},t:["asilo"],p:["migrante"]},
+{tel:"024",n:"Línea 024",d:{es:"Línea gratuita de atención a la conducta suicida del Ministerio de Sanidad, disponible las 24 horas."},t:["mental"],p:["nacional","migrante"]},
+{tel:"717003717",u:"https://www.telefonodelaesperanza.org",n:"Teléfono de la Esperanza",d:{es:"Línea de apoyo emocional."},t:["mental"],p:["nacional","migrante"]},
+{tel:"900202010",u:"https://www.anar.org",n:"Fundación ANAR",d:{es:"Línea gratuita de ayuda a niños, niñas y adolescentes."},t:["mental","familias"],p:["nacional"]},
+{u:"https://www.wpath.org",n:"WPATH",d:{es:"Asociación profesional internacional de salud trans. Publica guías clínicas de referencia (en inglés) que puedes llevar a tu médico o médica."},t:["hormonas"],p:["nacional","migrante"]},
+{u:"https://doi.org/10.1210/jc.2017-01658",n:"Guía clínica de la Endocrine Society",d:{es:"Guía de referencia sobre tratamiento hormonal y su seguimiento (en inglés), útil para compartir con tu profesional sanitario."},t:["hormonas"],p:["nacional","migrante"]}
+];
+var REG={madrid:"Madrid",cat:"Catalunya",val:"Comunitat Valenciana",and:"Andalucía",eus:"Euskadi",gal:"Galicia",ast:"Asturias",bal:"Illes Balears",can:"Canarias",nav:"Navarra",mur:"Murcia"};
+var TRAMITES=[
+{l:"https://www.boe.es/buscar/act.php?id=BOE-A-2023-5366",t:{es:"Cambio de nombre y mención de sexo",ca:"Canvi de nom i de menció de sexe",gl:"Cambio de nome e mención de sexo",eu:"Izen eta sexu-aipamen aldaketa",en:"Change of name and legal sex marker",fr:"Changement de prénom et de mention de sexe"},c:{es:"La ley estatal 4/2023 permite rectificar la mención registral del sexo por declaración propia, sin informes médicos ni requisitos hormonales. Hay procedimientos distintos según la edad. Si eres extranjera, extranjero o extranjere, el acceso depende de tu situación: consúltalo con una asociación.",en:"State law 4/2023 allows correcting the legal sex marker by self-declaration, with no medical reports or hormone requirements. Procedures differ by age. If you are a foreign national, access depends on your situation: check with an association.",fr:"La loi nationale 4/2023 permet de rectifier la mention de sexe à l’état civil par simple déclaration, sans certificat médical ni traitement hormonal. Les procédures varient selon l’âge. Si vous êtes étranger·ère, l’accès dépend de votre situation : renseignez-vous auprès d’une association."},p:["nacional","migrante"]},
+{t:{es:"Acceso a la sanidad",ca:"Accés a la sanitat",gl:"Acceso á sanidade",eu:"Osasunerako sarbidea",en:"Access to healthcare",fr:"Accès aux soins"},c:{es:"En España existe acceso a la atención sanitaria para personas empadronadas, incluidas muchas personas sin permiso de residencia. Las unidades de identidad de género dependen de cada comunidad autónoma, así que el proceso varía según dónde vivas.",en:"Spain provides healthcare access to people registered at a municipality, including many without a residence permit. Gender identity units depend on each autonomous community, so the process varies by where you live.",fr:"L’Espagne offre l’accès aux soins aux personnes inscrites à la mairie, y compris beaucoup de personnes sans titre de séjour. Les unités d’identité de genre dépendent de chaque communauté autonome : la démarche varie selon le lieu."},p:["nacional","migrante"]},
+{t:{es:"Empadronamiento",ca:"Empadronament",gl:"Empadroamento",eu:"Erroldatzea",en:"Municipal registration (padrón)",fr:"Inscription à la mairie (empadronamiento)"},c:{es:"Es el primer paso para acceder a servicios locales. Se hace en el ayuntamiento y permite acreditar tu residencia. Pregunta qué documentos aceptan.",en:"This is the first step to access local services. It is done at the town hall and proves where you live. Ask which documents they accept.",fr:"C’est la première étape pour accéder aux services locaux. Elle se fait à la mairie et prouve votre résidence. Demandez quels documents sont acceptés."},p:["migrante","nacional"]},
+{t:{es:"Protección internacional (asilo)",ca:"Protecció internacional (asil)",gl:"Protección internacional (asilo)",eu:"Nazioarteko babesa (asiloa)",en:"International protection (asylum)",fr:"Protection internationale (asile)"},c:{es:"Si has huido de tu país por persecución por tu identidad de género, puedes solicitar protección internacional. Busca asesoría legal gratuita antes de presentar la solicitud: la forma de contarlo importa.",en:"If you fled your country because of persecution over your gender identity, you can apply for international protection. Get free legal advice before applying: how you tell your story matters.",fr:"Si vous avez fui votre pays à cause de persécutions liées à votre identité de genre, vous pouvez demander une protection internationale. Cherchez un conseil juridique gratuit avant de déposer la demande : la manière de raconter compte."},p:["migrante"]},
+{t:{es:"Nombre sentido en servicios",ca:"Nom sentit als serveis",gl:"Nome sentido nos servizos",eu:"Sentitutako izena zerbitzuetan",en:"Chosen name in services",fr:"Prénom d’usage dans les services"},c:{es:"Muchos servicios públicos y centros educativos respetan el nombre sentido aunque no hayas cambiado aún tus papeles. Pídelo por escrito y guarda copia.",en:"Many public services and schools respect your chosen name even before your papers change. Ask in writing and keep a copy.",fr:"Beaucoup de services publics et d’établissements respectent le prénom d’usage avant même le changement de papiers. Demandez par écrit et gardez une copie."},p:["nacional","migrante"]}
+,
+{g:"vih",t:{es:"Hacerse la prueba del VIH",ca:"Fer-se la prova del VIH",gl:"Facerse a proba do VIH",eu:"GIB proba egitea",en:"Getting an HIV test",fr:"Se faire dépister du VIH"},c:{es:"Puedes hacértela de forma gratuita y confidencial en centros de ITS, centros de salud y entidades comunitarias. También hay autotests en farmacias. Si el resultado es positivo, hoy el VIH es una condición crónica y tratable.",en:"You can get tested free and confidentially at STI clinics, health centres and community organisations. Self-tests are also sold in pharmacies. If the result is positive, HIV today is a chronic, treatable condition.",fr:"Le dépistage est gratuit et confidentiel dans les centres IST, centres de santé et associations communautaires. Des autotests existent aussi en pharmacie. En cas de résultat positif, le VIH est aujourd’hui une maladie chronique et traitable."},p:["nacional","migrante"]},
+{g:"vih",t:{es:"PrEP: prevención antes de una posible exposición",ca:"PrEP: prevenció abans d’una possible exposició",gl:"PrEP: prevención antes dunha posible exposición",eu:"PrEP: balizko esposizioaren aurreko prebentzioa",en:"PrEP: prevention before possible exposure",fr:"PrEP : prévention avant une exposition possible"},c:{es:"Es una pastilla que reduce mucho el riesgo de adquirir el VIH. En España está financiada por la sanidad pública y se pide en centros de ITS y hospitales. Si tomas hormonas, coméntalo con el equipo médico para que la combine bien con tu tratamiento.",en:"A pill that greatly reduces the risk of getting HIV. In Spain it is funded by public healthcare and requested at STI clinics and hospitals. If you take hormones, tell the medical team so they can combine it well with your treatment.",fr:"Un comprimé qui réduit fortement le risque de contracter le VIH. En Espagne il est pris en charge par la santé publique et se demande dans les centres IST et les hôpitaux. Si vous prenez des hormones, signalez-le à l’équipe médicale pour bien coordonner les traitements."},p:["nacional","migrante"]},
+{g:"vih",t:{es:"PEP: si crees que ha habido exposición",ca:"PEP: si creus que hi ha hagut exposició",gl:"PEP: se cres que houbo exposición",eu:"PEP: esposizioa izan dela uste baduzu",en:"PEP: if you think you were exposed",fr:"PEP : si vous pensez avoir été exposé·e"},c:{es:"Es un tratamiento de emergencia que hay que empezar cuanto antes, siempre en las primeras 72 horas. Se pide en urgencias hospitalarias. No hace falta justificar nada.",en:"An emergency treatment that must start as soon as possible, always within 72 hours. It is requested at hospital emergency departments. You do not need to justify anything.",fr:"Un traitement d’urgence à commencer le plus tôt possible, toujours dans les 72 heures. Il se demande aux urgences hospitalières. Vous n’avez rien à justifier."},p:["nacional","migrante"]},
+{g:"vih",t:{es:"Vivir con VIH: tratamiento e indetectable",ca:"Viure amb VIH: tractament i indetectable",gl:"Vivir con VIH: tratamento e indetectable",eu:"GIBarekin bizi: tratamendua eta ezin igarri",en:"Living with HIV: treatment and undetectable",fr:"Vivre avec le VIH : traitement et indétectable"},c:{es:"El tratamiento antirretroviral es gratuito en la sanidad pública para quienes tienen acceso. Con carga viral indetectable mantenida, el VIH no se transmite por vía sexual (indetectable = intransmisible). Avisa siempre a tu médico de las hormonas que tomes para evitar interacciones.",en:"Antiretroviral treatment is free in public healthcare for those with access. With a sustained undetectable viral load, HIV is not transmitted sexually (undetectable = untransmittable). Always tell your doctor about any hormones you take to avoid interactions.",fr:"Le traitement antirétroviral est gratuit dans la santé publique pour les personnes qui y ont accès. Avec une charge virale indétectable durable, le VIH ne se transmet pas sexuellement (indétectable = intransmissible). Informez toujours votre médecin des hormones que vous prenez pour éviter les interactions."},p:["nacional","migrante"]},
+{g:"vih",t:{es:"VIH y migración",ca:"VIH i migració",gl:"VIH e migración",eu:"GIB eta migrazioa",en:"HIV and migration",fr:"VIH et migration"},c:{es:"Tener VIH no impide solicitar asilo ni empadronarte. Si tienes dificultades para acceder al tratamiento por tu situación administrativa, entidades como Médicos del Mundo o Apoyo Positivo pueden orientarte.",en:"Having HIV does not prevent you from claiming asylum or registering at the town hall. If you struggle to access treatment because of your administrative situation, organisations such as Médicos del Mundo or Apoyo Positivo can guide you.",fr:"Avoir le VIH n’empêche ni de demander l’asile ni de vous inscrire à la mairie. Si l’accès au traitement est difficile à cause de votre situation administrative, des associations comme Médicos del Mundo ou Apoyo Positivo peuvent vous orienter."},p:["migrante"]}
+];
+function tx(k){return T[lang][k]||T.es[k]}
+function apply(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll("[data-i]").forEach(function(e){e.textContent=tx(e.dataset.i)});
+  var sel=$("#rg");sel.setAttribute("aria-label",tx("rg"));sel.innerHTML="";var o=document.createElement("option");o.value="todas";o.textContent="📍 "+tx("rgAll");sel.appendChild(o);Object.keys(REG).forEach(function(k){var e=document.createElement("option");e.value=k;e.textContent=REG[k];sel.appendChild(e)});sel.value=rg;
+  $("#fbm").style.display=lang==="es"?"none":"block";$("#fba").style.display=lang==="es"?"none":"block";$("#fbr").style.display=lang==="es"?"none":"block";$("#fbt").style.display=["ca","gl","eu"].indexOf(lang)>-1?"block":"none";
+  $("#idea").placeholder=tx("idea");$("#q").placeholder=tx("q");$("#gracias").textContent="";
+  pinta();
+}
+
+function mk(href,text,ext){var a=document.createElement("a");a.href=href;a.textContent=text;if(ext){a.target="_blank";a.rel="noopener noreferrer"}a.style.marginRight="14px";a.style.fontWeight="700";return a}
+function addLinks(d,r){var w=document.createElement("p");
+  if(r.tel)w.appendChild(mk("tel:"+r.tel,"📞 "+tx("call")+" "+r.tel,false));
+  if(r.u)w.appendChild(mk(r.u,"🔗 "+tx("lnk"),true));
+  else if(!r.tel)w.appendChild(mk("https://duckduckgo.com/?q="+encodeURIComponent(r.n+" "+(REG[r.r]||"")),"🔍 "+tx("srch"),true));
+  d.appendChild(w)}
+var STEPS=["Empadronarme en el ayuntamiento","Pedir la tarjeta sanitaria","Contactar con una asociación de mi zona (pestaña Recursos)","Pedir cita con una asesoría legal de extranjería o de asilo","Guardar copia de mis documentos en un lugar seguro","Apuntarme a clases de español si las necesito","Buscar una red de apoyo en la comunidad"];
+var GLO=[["Asilo","Asylum","Asile"],["Empadronamiento","Municipal registration","Inscription à la mairie"],["Tarjeta sanitaria","Health card","Carte de santé"],["Cita previa","Appointment","Rendez-vous"],["Abogado o abogada","Lawyer","Avocat·e"],["Intérprete","Interpreter","Interprète"],["Denuncia","Police report","Plainte"],["Urgencias","Emergency room","Urgences"],["Nombre sentido","Chosen name","Prénom d’usage"],["Pronombres","Pronouns","Pronoms"]];
+var SOON=["💬 Chat, foros y grupos moderados","🤝 Mentoría y acompañamiento entre personas trans","📍 Mapa de servicios inclusivos con valoraciones","📓 Diario y seguimiento de salud con PIN, solo en tu dispositivo","🎙️ Ejercicios y simulador de voz","📅 Agenda de eventos LGTBIQ+","🤝 Red de acompañantes voluntarios","🩺 Directorio de profesionales amigables, validado por la comunidad","🏠 Alojamiento temporal seguro","💼 Bolsa de empleo inclusiva","🗺️ Mapa de espacios seguros","⏰ Recordatorios discretos de citas y tratamientos","🗂️ Cuaderno de pruebas para solicitudes de asilo"];
+function bldMas(){
+  var c=$("#chk");STEPS.forEach(function(t){var l=document.createElement("label");l.className="ck";var i=document.createElement("input");i.type="checkbox";var sp=document.createElement("span");sp.textContent=t;l.appendChild(i);l.appendChild(sp);c.appendChild(l)});
+  var tb=document.createElement("table");tb.className="g";var h=document.createElement("tr");["Español","English","Français"].forEach(function(x){var th=document.createElement("th");th.textContent=x;h.appendChild(th)});tb.appendChild(h);
+  GLO.forEach(function(r){var tr=document.createElement("tr");r.forEach(function(x){var td=document.createElement("td");td.textContent=x;tr.appendChild(td)});tb.appendChild(tr)});$("#glo").appendChild(tb);
+  SOON.forEach(function(t){var s=document.createElement("span");s.className="tag";s.textContent=t;$("#soon").appendChild(s)});
+  function card(){var f=[["Nombre sentido","#e1"],["Pronombres","#e2"],["Alergias y medicación","#e3"],["Contacto de confianza","#e4"],["Idiomas","#e5"]],o=["🪪 TARJETA DE EMERGENCIA"];
+    f.forEach(function(x){var v=$(x[1]).value.trim();if(v)o.push(x[0]+": "+v)});
+    o.push(o.length>1?"Si no puedo comunicarme, por favor llamen a mi contacto de confianza.":"Rellena los campos de arriba.");$("#ecard").textContent=o.join("\n")}
+  function letter(){var n=$("#l1").value.trim()||"[tu nombre]",p=$("#l2").value.trim()||"[tus pronombres]",v=$("#l3").value.trim()||"[servicio o centro]";
+    $("#ltxt").value="Estimados señores y señoras de "+v+":\n\nMe llamo "+n+" y les escribo para pedirles que, en todas las comunicaciones, listas y trámites, se dirijan a mí por este nombre y con los pronombres "+p+", aunque mi documentación todavía no lo recoja.\n\nLes agradezco de antemano su colaboración y su respeto. Quedo a su disposición para aclarar cualquier duda.\n\nUn saludo,\n"+n}
+  ["#e1","#e2","#e3","#e4","#e5"].forEach(function(i){$(i).addEventListener("input",card)});
+  ["#l1","#l2","#l3"].forEach(function(i){$(i).addEventListener("input",letter)});
+  $("#lcopy").addEventListener("click",function(){var t=$("#ltxt");t.select();var ok=false;try{ok=document.execCommand("copy")}catch(e){}
+    $("#lmsg").textContent=ok?"¡Copiado!":"Selecciona el texto y cópialo manualmente."});
+  card();letter()}
+function num(v){return parseFloat(String(v).replace(",","."))}
+function bldApr(){
+  var Q={endo:["¿Qué cambios puedo esperar y en cuánto tiempo?","¿Qué riesgos tiene en mi caso?","¿Qué analíticas necesito y con qué frecuencia?","¿Hay interacciones con lo que ya tomo?","¿Cómo afecta a mi fertilidad y qué opciones hay?","¿A quién llamo si tengo un efecto secundario?"],psi:["¿Tiene experiencia en diversidad de género?","¿Respetará mi nombre y mis pronombres?","¿Cómo trabajará sin ponerme etiquetas?","¿Cuántas sesiones, cuánto cuesta y cómo se organiza?","¿Qué pasa con mis datos y mis informes?"],log:["¿Tiene experiencia con voz trans?","¿Cuál sería el plan de ejercicios y los objetivos realistas?","¿Cómo evito dañar la voz?","¿Cuántas sesiones necesito y cuánto cuesta?"],leg:["¿Qué documentos necesito?","¿Cuáles son los plazos y los costes?","¿Cómo afecta a mi situación de extranjería o de asilo?","¿Quién gestiona el trámite y qué tengo que hacer yo?","¿Qué hago si me deniegan algo?"]};
+  function rec(){var t=$("#r0").value,n=$("#r1").value.trim()||"[tu nombre]",e=$("#r2").value.trim()||"[entidad o servicio]",h=$("#r3").value.trim()||"[describe qué ocurrió, cuándo y dónde]",f=new Date().toLocaleDateString("es-ES");
+    $("#rtxt").value="A la atención de "+e+":\n\nYo, "+n+", presento esta reclamación por "+t+".\n\nHechos:\n"+h+"\n\nSolicito que se investigue lo ocurrido, que se me trate por mi nombre y mis pronombres, y que se adopten medidas para que no vuelva a pasar. Solicito respuesta por escrito.\n\nAtentamente,\n"+n+"\nFecha: "+f}
+  function qs(){var l=$("#qlist");l.innerHTML="";Q[$("#q0").value].forEach(function(x){var li=document.createElement("li");li.textContent=x;l.appendChild(li)})}
+  function gas(){var v=function(i){return num($(i).value)||0},m=v("#g5")||1,tot=(v("#g1")+v("#g2"))*m+v("#g3")+v("#g4");
+    $("#gres").textContent="Total para "+m+" meses: "+tot.toFixed(2)+" €\nMedia mensual: "+(tot/m).toFixed(2)+" €"}
+  $("#r0").addEventListener("change",rec);["#r1","#r2","#r3"].forEach(function(i){$(i).addEventListener("input",rec)});
+  $("#rcopy").addEventListener("click",function(){var t=$("#rtxt");t.select();var ok=false;try{ok=document.execCommand("copy")}catch(e){}$("#rmsg").textContent=ok?"¡Copiado!":"Selecciona el texto y cópialo manualmente."});
+  $("#q0").addEventListener("change",qs);["#g1","#g2","#g3","#g4","#g5"].forEach(function(i){$(i).addEventListener("input",gas)});
+  rec();qs();gas()}
+function bldHor(){
+  function vol(){var d=num($("#d1").value),c=num($("#d2").value),v=num($("#d3").value),o=$("#dres");
+    if(!(d>0&&c>0)){o.textContent="Introduce la dosis y la concentración del vial (números mayores que 0).";return}
+    var ml=d/c,t="Volumen a cargar: "+ml.toFixed(2)+" mL";
+    if(v>0)t+="\nUn vial de "+v+" mL da para unas "+Math.floor(v/ml)+" inyecciones.";
+    if(ml>2)t+="\n⚠️ Es un volumen grande: consúltalo con tu profesional sanitario.";
+    t+="\nComprueba que la jeringa tenga marcas en mL.";
+    o.textContent=t}
+  var CV=[[3.671,"pg/mL","pmol/L"],[1/3.671,"pmol/L","pg/mL"],[0.03467,"ng/dL","nmol/L"],[1/0.03467,"nmol/L","ng/dL"]];
+  function conv(){var k=CV[+$("#u1").value],x=num($("#u2").value),o=$("#ures");
+    o.textContent=x>=0?x+" "+k[1]+" = "+(x*k[0]).toFixed(k[0]>1?1:2)+" "+k[2]:"Introduce un valor numérico."}
+  ["#d1","#d2","#d3"].forEach(function(i){$(i).addEventListener("input",vol)});
+  $("#u1").addEventListener("change",conv);$("#u2").addEventListener("input",conv);
+  vol();conv()}
+var perfil="todas",filtro="todos",tg="todos",rg="todas";
+function $(s){return document.querySelector(s)}
+function go(id){document.querySelectorAll("section").forEach(function(s){s.classList.toggle("on",s.id===id)});document.querySelectorAll("nav button").forEach(function(b){b.setAttribute("aria-current",b.dataset.go===id?"true":"false")});window.scrollTo(0,0)}
+function pasa(p){return perfil==="todas"||p.indexOf(perfil)>-1}
+function pinta(){
+  var L=$("#lista");L.innerHTML="";
+  RECURSOS.filter(function(r){return pasa(r.p)&&(rg==="todas"||!r.r||r.r===rg)&&(filtro==="todos"||r.t.indexOf(filtro)>-1)&&(r.n+(r.d[lang]||r.d.es)).toLowerCase().indexOf($("#q").value.toLowerCase())>-1}).forEach(function(r){
+    var d=document.createElement("div");d.className="card";
+    var h=document.createElement("h3");h.textContent=r.n;
+    var p=document.createElement("p");p.textContent=r.d[lang]||r.d.es;
+    d.appendChild(h);if(r.r){var tg2=document.createElement("span");tg2.className="tag";tg2.textContent="📍 "+REG[r.r];d.appendChild(tg2)}d.appendChild(p);addLinks(d,r);L.appendChild(d)});
+  if(!L.children.length){L.innerHTML='<p class="muted">'+tx('none')+'</p>'}
+  if(rg!=="todas"){var m=document.createElement("div");m.className="note";m.appendChild(document.createTextNode(tx("moreRg")+" "));m.appendChild(mk("https://felgtbi.org",tx("lnk")+" FELGTBI+",true));L.appendChild(m)}
+  var T=$("#tramites-lista");T.innerHTML="";
+  TRAMITES.filter(function(x){return pasa(x.p)&&(tg==="todos"||x.g===tg)}).forEach(function(x){
+    var d=document.createElement("details");
+    var s=document.createElement("summary");s.textContent=x.t[lang]||x.t.es;
+    var p=document.createElement("p");p.textContent=x.c[lang]||x.c.es;
+    d.appendChild(s);d.appendChild(p);if(x.l){var w=document.createElement("p");w.appendChild(mk(x.l,tx("law"),true));d.appendChild(w)}T.appendChild(d)});
+}
+document.querySelectorAll("[data-go]").forEach(function(b){b.addEventListener("click",function(){go(b.dataset.go)})});
+document.querySelectorAll("#perfil .chip").forEach(function(b){b.addEventListener("click",function(){perfil=b.dataset.p;document.querySelectorAll("#perfil .chip").forEach(function(c){c.setAttribute("aria-pressed",c===b?"true":"false")});pinta()})});
+document.querySelectorAll("#filtro .chip").forEach(function(b){b.addEventListener("click",function(){filtro=b.dataset.f;document.querySelectorAll("#filtro .chip").forEach(function(c){c.setAttribute("aria-pressed",c===b?"true":"false")});pinta()})});
+document.querySelectorAll("#tfiltro .chip").forEach(function(b){b.addEventListener("click",function(){tg=b.dataset.g;document.querySelectorAll("#tfiltro .chip").forEach(function(c){c.setAttribute("aria-pressed",c===b?"true":"false")});pinta()})});
+$("#exit").addEventListener("click",function(){window.location.replace("https://www.google.com")});
+$("#enviar").addEventListener("click",function(){$("#idea").value="";$("#gracias").textContent=tx("thanks")});
+$("#lang").addEventListener("change",function(){lang=this.value;apply()});
+$("#q").addEventListener("input",pinta);
+$("#rg").addEventListener("change",function(){rg=this.value;pinta()});
+bldMas();bldHor();bldApr();
+apply();
+</script>
+</body>
+</html>
