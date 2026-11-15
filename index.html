@@ -146,6 +146,19 @@ details ul{padding-left:20px;margin:8px 0}details li{margin:4px 0}
   <div class="card"><h3 data-i="a1h"></h3><p data-i="a1b"></p></div>
   <div class="card"><h3 data-i="a2h"></h3><p data-i="a2b"></p></div>
   <div class="card"><h3 data-i="a3h"></h3><p data-i="a3b"></p></div>
+  <div class="card" lang="es"><h3>📍 Recursos cerca de ti</h3>
+    <div class="note" id="fbs" style="display:none" data-i="fbNote"></div>
+    <p class="muted">Tu ubicación no se guarda ni se envía a ningún sitio: la distancia se calcula en tu dispositivo. Si prefieres no usarla, elige tu ciudad.</p>
+    <p><button class="primary" id="gps">📍 Usar mi ubicación</button></p>
+    <select id="city" style="width:100%"></select>
+    <div id="nres"></div>
+    <p class="muted">Aquí salen las entidades locales. Las nacionales atienden en toda España (pestaña Recursos).</p>
+    <p><a href="https://www.google.com/maps/search/hospital+urgencias" target="_blank" rel="noopener noreferrer"><b>🏥 Urgencias cerca</b></a> &nbsp; <a href="https://www.google.com/maps/search/comisar%C3%ADa" target="_blank" rel="noopener noreferrer"><b>🚓 Comisaría cerca</b></a></p>
+    <p class="muted">Estos enlaces abren Google Maps. En una emergencia, llama al 112.</p>
+    <p><button class="chip" id="mapbtn">🗺️ Ver mapa de entidades</button></p>
+    <p class="muted">Al abrir el mapa, el proveedor (OpenStreetMap) puede ver la zona que consultas y tu dirección IP. Tu ubicación no se envía.</p>
+    <p class="muted" id="mmsg"></p>
+    <div id="map" style="height:320px;border-radius:16px;display:none;margin-top:8px;position:relative;z-index:0"></div></div>
 </section>
 <section id="aprender" lang="es">
   <h1 data-i="nApr"></h1>
@@ -289,7 +302,7 @@ function apply(){
   document.documentElement.lang=lang;
   document.querySelectorAll("[data-i]").forEach(function(e){e.textContent=tx(e.dataset.i)});
   var sel=$("#rg");sel.setAttribute("aria-label",tx("rg"));sel.innerHTML="";var o=document.createElement("option");o.value="todas";o.textContent="📍 "+tx("rgAll");sel.appendChild(o);Object.keys(REG).forEach(function(k){var e=document.createElement("option");e.value=k;e.textContent=REG[k];sel.appendChild(e)});sel.value=rg;
-  $("#fbm").style.display=lang==="es"?"none":"block";$("#fba").style.display=lang==="es"?"none":"block";$("#fbr").style.display=lang==="es"?"none":"block";$("#fbt").style.display=["ca","gl","eu"].indexOf(lang)>-1?"block":"none";
+  $("#fbm").style.display=lang==="es"?"none":"block";$("#fba").style.display=lang==="es"?"none":"block";$("#fbs").style.display=lang==="es"?"none":"block";$("#fbr").style.display=lang==="es"?"none":"block";$("#fbt").style.display=["ca","gl","eu"].indexOf(lang)>-1?"block":"none";
   $("#idea").placeholder=tx("idea");$("#q").placeholder=tx("q");$("#gracias").textContent="";
   pinta();
 }
@@ -319,6 +332,38 @@ function bldMas(){
     $("#lmsg").textContent=ok?"¡Copiado!":"Selecciona el texto y cópialo manualmente."});
   card();letter()}
 function num(v){return parseFloat(String(v).replace(",","."))}
+var CITY={"Madrid":[40.4168,-3.7038],"Barcelona":[41.3874,2.1686],"València":[39.4699,-0.3763],"Sevilla":[37.3891,-5.9845],"Zaragoza":[41.6488,-0.8891],"Málaga":[36.7213,-4.4214],"Murcia":[37.9922,-1.1307],"Palma":[39.5696,2.6502],"Las Palmas de Gran Canaria":[28.1235,-15.4363],"Bilbao":[43.2630,-2.9350],"Alicante":[38.3452,-0.4810],"Córdoba":[37.8882,-4.7794],"Valladolid":[41.6523,-4.7245],"Vigo":[42.2406,-8.7207],"A Coruña":[43.3623,-8.4115],"Granada":[37.1773,-3.5986],"Oviedo":[43.3614,-5.8593],"Pamplona":[42.8125,-1.6458],"Donostia":[43.3183,-1.9812],"Santander":[43.4623,-3.8100],"Santa Cruz de Tenerife":[28.4636,-16.2518],"Vitoria-Gasteiz":[42.8467,-2.6716],"Logroño":[42.4627,-2.4450],"Toledo":[39.8628,-4.0273],"Badajoz":[38.8794,-6.9707]};
+var PIN={"COGAM":[40.4168,-3.7038,"Madrid"],"Transexualia":[40.4168,-3.7038,"Madrid"],"Centro Sanitario Sandoval":[40.4168,-3.7038,"Madrid"],"Casal Lambda":[41.3874,2.1686,"Barcelona"],"Observatori contra l’Homofòbia":[41.3874,2.1686,"Barcelona"],"Servicio Trànsit":[41.3874,2.1686,"Barcelona"],"Stop Sida":[41.3874,2.1686,"Barcelona"],"Lambda València":[39.4699,-0.3763,"València"],"Unidad de Identidad de Género de Málaga":[36.7213,-4.4214,"Málaga"],"Aldarte":[43.2630,-2.9350,"Bilbao"],"Gehitu":[43.3183,-1.9812,"Donostia"],"Alas A Coruña":[43.3623,-8.4115,"A Coruña"],"Xega":[43.3614,-5.8593,"Asturias"],"Ben Amics":[39.5696,2.6502,"Palma"],"Fundación Triángulo Canarias":[28.1235,-15.4363,"Canarias"],"Kattalingorri":[42.8125,-1.6458,"Pamplona"],"Colectivo No Te Prives":[37.9922,-1.1307,"Murcia"]};
+function hav(a,b,c,d){var R=6371,r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,h=Math.sin(x/2)*Math.sin(x/2)+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)*Math.sin(y/2);return 2*R*Math.asin(Math.sqrt(h))}
+function near(lat,lon,lbl){
+  var out=$("#nres");out.innerHTML="";
+  var P=RECURSOS.filter(function(r){return PIN[r.n]}).map(function(r){var p=PIN[r.n];return {r:r,p:p,d:hav(lat,lon,p[0],p[1])}}).sort(function(a,b){return a.d-b.d}).slice(0,5);
+  var h=document.createElement("p");h.className="muted";h.textContent=lbl+" · distancias aproximadas hasta el centro de cada ciudad.";out.appendChild(h);
+  P.forEach(function(x){var c=document.createElement("div");c.className="card";var t=document.createElement("h3");t.textContent=x.r.n;var d=document.createElement("p");d.textContent=x.p[2]+" · a unos "+Math.round(x.d)+" km";var l=document.createElement("p");
+    l.appendChild(mk("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(x.r.n+" "+x.p[2]),"🗺️ Abrir en mapa",true));if(x.r.u)l.appendChild(mk(x.r.u,"🔗 "+tx("lnk"),true));
+    c.appendChild(t);c.appendChild(d);c.appendChild(l);out.appendChild(c)})}
+var mapOn=false;
+function showMap(){
+  var box=$("#map"),msg=$("#mmsg");box.style.display="block";if(mapOn)return;mapOn=true;msg.textContent="";
+  var css=document.createElement("link");css.rel="stylesheet";css.href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";document.head.appendChild(css);
+  var sc=document.createElement("script");sc.src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
+  sc.onerror=function(){msg.textContent="No se pudo cargar el mapa. Usa la lista de arriba.";box.style.display="none";mapOn=false};
+  sc.onload=function(){var m=L.map("map").setView([40.2,-3.7],5),warned=false;
+    var t=L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap"}).addTo(m);
+    t.on("tileerror",function(){if(!warned){warned=true;msg.textContent="Los mapas externos pueden estar bloqueados en esta vista. Funciona al abrir la app desde tu propia web, por ejemplo en GitHub Pages."}});
+    RECURSOS.forEach(function(r){var p=PIN[r.n];if(!p)return;
+      var d=document.createElement("div"),b=document.createElement("b"),s=document.createElement("div");b.textContent=r.n;s.textContent=p[2];d.appendChild(b);d.appendChild(s);if(r.u)d.appendChild(mk(r.u,tx("lnk"),true));
+      L.circleMarker([p[0],p[1]],{radius:9,color:"#8b5cf6",fillColor:"#f5a9b8",fillOpacity:.9}).addTo(m).bindPopup(d)})};
+  document.head.appendChild(sc)}
+function bldNear(){
+  var sel=$("#city"),o0=document.createElement("option");o0.value="";o0.textContent="Elige tu ciudad…";sel.appendChild(o0);
+  Object.keys(CITY).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=k;sel.appendChild(o)});
+  sel.addEventListener("change",function(){if(this.value)near(CITY[this.value][0],CITY[this.value][1],"Desde "+this.value)});
+  $("#gps").addEventListener("click",function(){var o=$("#nres");
+    if(!navigator.geolocation){o.textContent="Tu navegador no permite usar la ubicación. Elige tu ciudad en la lista.";return}
+    o.textContent="Buscando…";
+    navigator.geolocation.getCurrentPosition(function(p){near(p.coords.latitude,p.coords.longitude,"Según tu ubicación (no se guarda ni se envía)")},function(){o.textContent="No se pudo obtener la ubicación. Elige tu ciudad en la lista."},{timeout:10000,maximumAge:0})});
+  $("#mapbtn").addEventListener("click",showMap)}
 function bldApr(){
   var Q={endo:["¿Qué cambios puedo esperar y en cuánto tiempo?","¿Qué riesgos tiene en mi caso?","¿Qué analíticas necesito y con qué frecuencia?","¿Hay interacciones con lo que ya tomo?","¿Cómo afecta a mi fertilidad y qué opciones hay?","¿A quién llamo si tengo un efecto secundario?"],psi:["¿Tiene experiencia en diversidad de género?","¿Respetará mi nombre y mis pronombres?","¿Cómo trabajará sin ponerme etiquetas?","¿Cuántas sesiones, cuánto cuesta y cómo se organiza?","¿Qué pasa con mis datos y mis informes?"],log:["¿Tiene experiencia con voz trans?","¿Cuál sería el plan de ejercicios y los objetivos realistas?","¿Cómo evito dañar la voz?","¿Cuántas sesiones necesito y cuánto cuesta?"],leg:["¿Qué documentos necesito?","¿Cuáles son los plazos y los costes?","¿Cómo afecta a mi situación de extranjería o de asilo?","¿Quién gestiona el trámite y qué tengo que hacer yo?","¿Qué hago si me deniegan algo?"]};
   function rec(){var t=$("#r0").value,n=$("#r1").value.trim()||"[tu nombre]",e=$("#r2").value.trim()||"[entidad o servicio]",h=$("#r3").value.trim()||"[describe qué ocurrió, cuándo y dónde]",f=new Date().toLocaleDateString("es-ES");
@@ -373,7 +418,7 @@ $("#enviar").addEventListener("click",function(){$("#idea").value="";$("#gracias
 $("#lang").addEventListener("change",function(){lang=this.value;apply()});
 $("#q").addEventListener("input",pinta);
 $("#rg").addEventListener("change",function(){rg=this.value;pinta()});
-bldMas();bldHor();bldApr();
+bldMas();bldHor();bldApr();bldNear();
 apply();
 </script>
 </body>
